@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Loan Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f1f5f9; min-height: 100vh; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 24px; }
+    header { text-align: center; margin-bottom: 32px; }
+    h1 { font-size: 1.5rem; font-weight: 800; color: #1e293b; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.05); }
+    .stat-value { font-size: 2rem; font-weight: 800; color: #16a34a; }
+    .stat-label { font-size: 0.85rem; color: #64748b; margin-top: 4px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.05); }
+    th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+    th { background: #f8fafc; font-weight: 700; color: #334155; font-size: 0.85rem; }
+    td { font-size: 0.9rem; color: #1e293b; }
+    tr:hover { background: #f8fafc; }
+    .status { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+    .status-new { background: #fef3c7; color: #d97706; }
+    .status-clicked { background: #dcfce7; color: #16a34a; }
+    .btn { padding: 8px 16px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
+    .btn-primary { background: #16a34a; color: #fff; }
+    .btn-primary:hover { background: #15803d; }
+    .empty { text-align: center; padding: 40px; color: #94a3b8; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>📊 Quản trị Loan Portal</h1>
+    <p style="color:#64748b;">Dữ liệu lưu trên trình duyệt (localStorage)</p>
+  </header>
+
+  <div class="stats">
+    <div class="stat-card"><div class="stat-value" id="total-apps">0</div><div class="stat-label">Tổng đăng ký</div></div>
+    <div class="stat-card"><div class="stat-value" id="total-clicks">0</div><div class="stat-label">Tổng click</div></div>
+    <div class="stat-card"><div class="stat-value" id="conversion-rate">0%</div><div class="stat-label">Tỷ lệ chuyển đổi</div></div>
+    <div class="stat-card"><div class="stat-value" id="est-commission">0đ</div><div class="stat-label">Ước tính hoa hồng</div></div>
+  </div>
+
+  <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>Họ tên</th><th>SĐT</th><th>Số tiền</th>
+          <th>Đã click</th><th>Trạng thái</th><th>Thời gian</th>
+        </tr>
+      </thead>
+      <tbody id="apps-body"></tbody>
+    </table>
+  </div>
+
+  <div style="text-align:center;margin-top:20px;">
+    <button class="btn btn-primary" onclick="exportCSV()">📥 Xuất CSV</button>
+    <button class="btn" style="background:#e2e8f0;color:#334155;margin-left:10px;" onclick="clearAll()">🗑️ Xóa toàn bộ</button>
+  </div>
+</div>
+
+<script>
+function fmt(v) {
+  if (v >= 1000000) return (v/1000000).toFixed(0) + ' Triệu';
+  return v.toLocaleString('vi-VN') + 'đ';
+}
+
+function render() {
+  const apps = JSON.parse(localStorage.getItem('loan_apps') || '[]').sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+  const clicks = apps.filter(a => a.status === 'Đã click link').length;
+
+  document.getElementById('total-apps').textContent = apps.length;
+  document.getElementById('total-clicks').textContent = clicks;
+  document.getElementById('conversion-rate').textContent = apps.length ? ((clicks/apps.length)*100).toFixed(1) + '%' : '0%';
+  document.getElementById('est-commission').textContent = fmt(clicks * 50000);
+
+  const tbody = document.getElementById('apps-body');
+  tbody.innerHTML = apps.length ? apps.map(a => `
+    <tr>
+      <td style="font-size:0.7rem">${a.id}</td>
+      <td>${a.full_name}</td>
+      <td>${a.phone_number}</td>
+      <td>${fmt(a.loan_amount)}</td>
+      <td>${a.clicked_partner || '-'}</td>
+      <td><span class="status ${a.status === 'Đã click link' ? 'status-clicked' : 'status-new'}">${a.status}</span></td>
+      <td style="font-size:0.8rem">${new Date(a.created_at).toLocaleString('vi-VN')}</td>
+    </tr>
+  `).join('') : '<tr><td colspan="7" class="empty">Chưa có đăng ký nào</td></tr>';
+}
+
+function exportCSV() {
+  const apps = JSON.parse(localStorage.getItem('loan_apps') || '[]');
+  let csv = 'ID,Họ tên,SĐT,Số tiền,Đã click,Trạng thái,Thời gian\n';
+  apps.forEach(a => {
+    csv += '"' + a.id + '","' + a.full_name + '","' + a.phone_number + '","' + fmt(a.loan_amount) + '","' + (a.clicked_partner || '') + '","' + a.status + '","' + a.created_at + '"\n';
+  });
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const el = document.createElement('a');
+  el.href = url; el.download = 'loan_applications.csv'; el.click();
+  URL.revokeObjectURL(url);
+}
+
+function clearAll() {
+  if (confirm('Xóa toàn bộ dữ liệu? Không thể hoàn tác!')) {
+    localStorage.removeItem('loan_apps');
+    render();
+  }
+}
+
+render();
+</script>
+</body>
+</html>

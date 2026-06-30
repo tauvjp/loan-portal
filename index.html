@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Vay Nhanh - Đăng Ký Vay Tài Chính Online</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f5f7fa; min-height: 100vh; color: #1a1a2e; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .hero { background: linear-gradient(135deg, #16a34a, #22c55e); padding: 50px 0 36px; text-align: center; color: #fff; border-radius: 0 0 24px 24px; margin: -20px -20px 20px; }
+    .hero h1 { font-size: 2rem; font-weight: 900; }
+    .hero p { color: rgba(255,255,255,.9); margin-top: 6px; }
+    .badges { display: flex; justify-content: center; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .badge { background: rgba(255,255,255,.2); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+    .stats { display: flex; justify-content: center; gap: 12px; margin: 20px 0; flex-wrap: wrap; }
+    .stat { text-align: center; background: #fff; padding: 14px 18px; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,.06); min-width: 90px; }
+    .stat .v { font-size: 1.4rem; font-weight: 900; color: #16a34a; }
+    .stat .l { font-size: 0.7rem; color: #64748b; margin-top: 2px; }
+    .header { text-align: center; padding: 14px 0; }
+    .header h1 { font-size: 1.5rem; font-weight: 900; }
+    .header h1 span { color: #16a34a; }
+    .header p { color: #64748b; font-size: 0.9rem; }
+    .progress { display: flex; justify-content: center; gap: 8px; margin: 16px 0; }
+    .pstep { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; background: #e2e8f0; color: #94a3b8; transition: all .3s; }
+    .pstep.active { background: #16a34a; color: #fff; transform: scale(1.1); }
+    .pstep.done { background: #bbf7d0; color: #16a34a; }
+    .step { display: none; animation: fadeIn .35s ease; }
+    .step.active { display: block; }
+    .step-title { font-size: 1.15rem; font-weight: 700; text-align: center; margin-bottom: 18px; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .btn { display: block; width: 100%; padding: 15px; border: none; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all .2s; text-align: center; }
+    .btn-primary { background: linear-gradient(135deg, #16a34a, #22c55e); color: #fff; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(22,163,74,.3); }
+    .btn-primary:active { transform: scale(.98); }
+    .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; }
+    .amounts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+    .amt { background: #fff; border: 2px solid #e2e8f0; border-radius: 14px; padding: 18px; cursor: pointer; transition: all .2s; text-align: center; }
+    .amt:hover { border-color: #22c55e; }
+    .amt.sel { border-color: #16a34a; background: #f0fdf4; box-shadow: 0 2px 12px rgba(22,163,74,.15); }
+    .amt .l { font-size: 0.75rem; color: #64748b; }
+    .amt .v { font-size: 1.15rem; font-weight: 800; color: #16a34a; }
+    .cond { margin-bottom: 20px; }
+    .cond-item { display: flex; align-items: center; gap: 12px; background: #fff; padding: 14px; border-radius: 12px; margin-bottom: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.04); font-weight: 500; }
+    .cond-item .i { font-size: 1.3rem; }
+    .fg { margin-bottom: 12px; }
+    .fg label { display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 4px; }
+    .fg input { width: 100%; padding: 13px 14px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 1rem; font-family: inherit; transition: border-color .2s; outline: none; }
+    .fg input:focus { border-color: #16a34a; box-shadow: 0 0 0 3px rgba(22,163,74,.1); }
+    .partners { display: flex; flex-direction: column; gap: 12px; }
+    .pc { background: #fff; border-radius: 14px; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,.06); }
+    .pc-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .pc-head img { width: 46px; height: 46px; border-radius: 10px; object-fit: contain; }
+    .pc-name { font-weight: 700; font-size: 1rem; }
+    .pc-tag { display: inline-block; background: #fef3c7; color: #d97706; padding: 2px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 600; margin-top: 3px; }
+    .pc-desc { font-size: 0.85rem; color: #64748b; margin-bottom: 8px; }
+    .pc-details { display: flex; gap: 14px; font-size: 0.8rem; color: #475569; margin-bottom: 12px; }
+    .pc-actions { display: flex; align-items: center; gap: 10px; }
+    .pc-actions img { width: 72px; height: 72px; border-radius: 8px; border: 1px solid #e2e8f0; }
+    .pc-btn { flex: 1; display: flex; align-items: center; justify-content: center; padding: 13px; background: linear-gradient(135deg, #16a34a, #22c55e); color: #fff; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 0.9rem; transition: all .2s; }
+    .pc-btn:hover { transform: scale(1.01); box-shadow: 0 4px 16px rgba(22,163,74,.3); }
+    .footer { text-align: center; padding: 24px 0 16px; font-size: 0.75rem; color: #94a3b8; }
+  </style>
+</head>
+<body>
+<div class="hero">
+  <h1>💰 Vay Tiền Nhanh</h1>
+  <p>Giải ngân siêu tốc • Thủ tục đơn giản</p>
+  <div class="badges">
+    <span class="badge">🔒 Bảo mật SSL</span>
+    <span class="badge">⚡ Giải ngân 10 phút</span>
+    <span class="badge">🇻🇳 Hợp pháp VN</span>
+  </div>
+</div>
+<div class="container">
+  <div class="stats">
+    <div class="stat"><div class="v">50K+</div><div class="l">Đã vay</div></div>
+    <div class="stat"><div class="v">4.8⭐</div><div class="l">Đánh giá</div></div>
+    <div class="stat"><div class="v">98%</div><div class="l">Duyệt</div></div>
+  </div>
+  <div class="header"><h1>Đăng Ký <span>Vay Nhanh</span></h1><p>Chỉ 2 phút, nhận tiền ngay</p></div>
+
+  <div class="progress">
+    <div class="pstep active" id="p1">1</div>
+    <div class="pstep" id="p2">2</div>
+    <div class="pstep" id="p3">3</div>
+    <div class="pstep" id="p4">4</div>
+  </div>
+
+  <div class="step active" id="s1">
+    <div class="step-title">💰 Bạn cần vay bao nhiêu?</div>
+    <div class="amounts">
+      <div class="amt" data-v="1000000"><div class="l">Tiêu chuẩn</div><div class="v">1 Triệu</div></div>
+      <div class="amt" data-v="3000000"><div class="l">Phổ biến</div><div class="v">3 Triệu</div></div>
+      <div class="amt" data-v="5000000"><div class="l">Nhiều người chọn</div><div class="v">5 Triệu</div></div>
+      <div class="amt" data-v="10000000"><div class="l">Hạn mức cao</div><div class="v">10 Triệu</div></div>
+    </div>
+    <button class="btn btn-primary" id="next1" disabled>Tiếp tục →</button>
+  </div>
+
+  <div class="step" id="s2">
+    <div class="step-title">✅ Bạn đáp ứng đủ điều kiện?</div>
+    <div class="cond">
+      <div class="cond-item"><div class="i">🇻🇳</div><div>Là công dân Việt Nam</div></div>
+      <div class="cond-item"><div class="i">🪪</div><div>Có căn cước công dân</div></div>
+      <div class="cond-item"><div class="i">💳</div><div>Có thẻ ngân hàng chính chủ</div></div>
+      <div class="cond-item"><div class="i">💼</div><div>Có việc làm ổn định</div></div>
+    </div>
+    <button class="btn btn-primary" id="next2">✅ ĐÚNG, TÔI ĐÁP ỨNG ĐỦ</button>
+  </div>
+
+  <div class="step" id="s3">
+    <div class="step-title">📝 Thông tin liên hệ</div>
+    <form id="appForm">
+      <div class="fg"><label>👤 Họ và tên</label><input type="text" id="name" name="Họ và tên" placeholder="Nguyễn Văn A" required></div>
+      <div class="fg"><label>📱 Số điện thoại</label><input type="tel" id="phone" name="Số điện thoại" placeholder="0901234567" required pattern="[0-9]{10}"></div>
+      <button type="submit" class="btn btn-primary">💡 ĐỀ XUẤT GÓI VAY TỐT NHẤT</button>
+    </form>
+  </div>
+
+  <div class="step" id="s4">
+    <div class="step-title">🎉 Chọn nhà đài vay tiền</div>
+    <p style="text-align:center;color:#64748b;margin-bottom:14px;font-size:0.85rem;">Dựa trên nhu cầu, đây là các gói phù hợp:</p>
+    <div class="partners" id="plist"></div>
+  </div>
+
+  <div class="footer">© 2026 - Dịch vụ tư vấn vay tài chính online</div>
+</div>
+
+<script>
+// DATA
+const P = [
+  { id:'jeff-app', name:'Jeff App', logo:'image1.png', qr:'image2.png', min:500000, max:10000000, time:'10 phút', tag:'⚡ Siêu tốc', des:'Giải ngân sau 10 phút, không duyệt hồ sơ phức tạp', link:'https://go.dinos.click/click?a=8782&o=161' },
+  { id:'vayvnd', name:'VAYVND', qr:'image4.png', logo:'image3.png', min:500000, max:15000000, time:'Vài giờ', tag:'🛡️ An toàn', des:'Công ty tài chính lớn, nhận tiền nhanh, bảo mật cao', link:'https://go.dinos.click/click?a=8782&o=277' },
+  { id:'moneyveo', name:'Moneyveo', logo:'image5.png', qr:'image6.png', min:1000000, max:10000000, time:'Nhanh chóng', tag:'🤝 Kết nối', des:'Nền tảng công nghệ kết nối hiện đại', link:'https://go.dinos.click/click?a=8782&o=663' },
+  { id:'creditnice', name:'Creditnice', logo:'image7.png', qr:'image8.png', min:500000, max:10000000, time:'Linh hoạt', tag:'🔥 Phổ biến', des:'Đơn giản, linh hoạt thời gian trả', link:'https://go.clickbuy.asia/click?a=8782&o=1284' },
+  { id:'vaymini', name:'VayMini', logo:'image9.png', qr:'image10.png', min:500000, max:5000000, time:'Siêu nhanh', tag:'⚡ Nhanh gọn', des:'Hỗ trợ vay tiêu dùng siêu nhanh', link:'https://assets.clickbuy.asia/click?a=8782&o=1218' },
+  { id:'cashspace', name:'Cashspace', logo:'image11.png', qr:'image12.png', min:500000, max:10000000, time:'14 phút', tag:'🔥 Mới', des:'Tập hợp ưu đãi từ Tamo, Robocash, Senmo', link:'https://go.dinos.click/click?a=8782&o=582' }
+];
+const state = { cur: 1, amt: 0, appId: null };
+
+function go(n) {
+  document.querySelectorAll('.step').forEach(e => e.classList.remove('active'));
+  document.getElementById('s'+n).classList.add('active');
+  document.querySelectorAll('.pstep').forEach((e,i) => {
+    e.classList.remove('active','done');
+    if (i+1 < n) { e.classList.add('done'); e.innerHTML = '✓'; }
+    else if (i+1 === n) { e.classList.add('active'); e.innerHTML = i+1; }
+    else e.innerHTML = i+1;
+  });
+  state.cur = n; window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function fmt(v) { return v >= 1000000 ? (v/1000000)+' Triệu' : v.toLocaleString('vi-VN')+'đ'; }
+
+function save(name, phone, amt) {
+  const a = JSON.parse(localStorage.getItem('loan_apps')||'[]');
+  const id = 'APP-'+Date.now();
+  a.push({id,full_name:name,phone_number:phone,loan_amount:amt,status:'Đã đăng ký',clicked_partner:null,created_at:new Date().toISOString()});
+  localStorage.setItem('loan_apps',JSON.stringify(a));
+  return id;
+}
+
+function click(p) {
+  const a = JSON.parse(localStorage.getItem('loan_apps')||'[]');
+  const x = a.find(i => i.id === state.appId);
+  if (x) { x.clicked_partner = p; x.status = 'Đã click link'; x.clicked_at = new Date().toISOString(); localStorage.setItem('loan_apps',JSON.stringify(a)); }
+}
+
+document.querySelectorAll('.amt').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.amt').forEach(e => e.classList.remove('sel'));
+    b.classList.add('sel'); state.amt = parseInt(b.dataset.v); document.getElementById('next1').disabled = false;
+  });
+});
+document.getElementById('next1').addEventListener('click', () => go(2));
+document.getElementById('next2').addEventListener('click', () => go(3));
+document.getElementById('appForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const n = document.getElementById('name').value.trim(), p = document.getElementById('phone').value.trim();
+  if (!n || !p) { alert('Vui lòng điền đầy đủ thông tin!'); return; }
+  state.appId = save(n, p, state.amt);
+  go(4);
+  document.getElementById('plist').innerHTML = P.map(x => `
+    <div class="pc">
+      <div class="pc-head"><img src="${x.logo}" alt=""><div><div class="pc-name">${x.name}</div><span class="pc-tag">${x.tag}</span></div></div>
+      <div class="pc-desc">${x.des}</div>
+      <div class="pc-details"><span>💰 ${fmt(x.min)} - ${fmt(x.max)}</span><span>⏱ ${x.time}</span></div>
+      <div class="pc-actions">
+        <div><img src="${x.qr}" alt="QR"></div>
+        <a href="${x.link}" target="_blank" rel="noopener" class="pc-btn" onclick="click('${x.name}')">💵 NHẬN TIỀN NGAY</a>
+      </div>
+    </div>
+  `).join('');
+});
+</script>
+</body>
+</html>
